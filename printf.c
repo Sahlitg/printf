@@ -1,74 +1,86 @@
+#include <stdarg.h>
+#include <stddef.h>
 #include "main.h"
-#include <stdlib.h>
-#include <stdio.h>
 
-int printIdentifiers(char next, va_list arg)
+/**
+ * get_operater - select function for conversion
+ * @c: char to check
+ * Return: pointer
+ */
+
+int (*get_op(const char c))(va_list)
 {
-	int functsIndex;
+	int i = 0;
 
-	identifierStruct functs[] = {
+	flags_p fp[] = {
 		{"c", print_char},
 		{"s", print_str},
-		{"d", print_int},
-		{"i", print_int},
+		{"i", print_nbr},
+		{"d", print_nbr},
+		{"b", print_binary},
+		{"o", print_octal},
+		{"x", print_hexa_lower},
+		{"X", print_hexa_upper},
 		{"u", print_unsigned},
-		{"b", print_unsignedToBinary},
-		{"o", print_oct},
-		{"x", print_hex},
-		{"X", print_HEX},
-		{"S", print_STR},
-		{NULL, NULL}
+		{"S", print_str_unprintable},
+		{"r", print_str_reverse},
+		{"p", print_ptr},
+		{"R", print_rot13},
+		{"%", print_percent}
 	};
-
-	for (functsIndex = 0; functs[functsIndex].indentifier != NULL; functsIndex++)
+	while (i < 14)
 	{
-		if (functs[functsIndex].indentifier[0] == next)
-			return (functs[functsIndex].printer(arg));
+		if (c == fp[i].c[0])
+		{
+			return (fp[i].f);
+		}
+		i++;
 	}
-	return (0);
+	return (NULL);
 }
 
+/**
+ * _printf - printf function
+ * @format: format string
+ * Return: chars
+ */
 
 int _printf(const char *format, ...)
 {
-	unsigned int i;
-	int identifierPrinted = 0, charPrinted = 0;
-	va_list arg;
+	va_list ap;
+	int sum = 0, i = 0;
+	int (*func)();
 
-	va_start(arg, format);
-	if (format == NULL)
+	if (!format || (format[0] == '%' && format[1] == '\0'))
 		return (-1);
+	va_start(ap, format);
 
-	for (i = 0; format[i] != '\0'; i++)
+	while (format[i])
 	{
-		if (format[i] != '%')
+		if (format[i] == '%')
+		{
+			if (format[i + 1] != '\0')
+				func = get_op(format[i + 1]);
+			if (func == NULL)
+			{
+				_putchar(format[i]);
+				sum++;
+				i++;
+			}
+			else
+			{
+				sum += func(ap);
+				i += 2;
+				continue;
+			}
+		}
+		else
 		{
 			_putchar(format[i]);
-			charPrinted++;
-			continue;
-		}
-		if (format[i + 1] == '%')
-		{
-			_putchar('%');
-			charPrinted++;
+			sum++;
 			i++;
-			continue;
-		}
-		if (format[i + 1] == '\0')
-			return (-1);
-
-		identifierPrinted = printIdentifiers(format[i + 1], arg);
-		if (identifierPrinted == -1 || identifierPrinted != 0)
-			i++;
-		if (identifierPrinted > 0)
-			charPrinted += identifierPrinted;
-
-		if (identifierPrinted == 0)
-		{
-			_putchar('%');
-			charPrinted++;
 		}
 	}
-	va_end(arg);
-	return (charPrinted);
+	va_end(ap);
+	return (sum);
 }
