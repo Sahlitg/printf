@@ -1,8 +1,8 @@
+#include "main.h"
+#include <stdlib.h>
 #include <stdio.h>
-#include <stdarg.h>
-#include <main.h>
 
-int printIdentifier(char next, va_list arg)
+int printIdentifiers(char next, va_list arg)
 {
 	int functsIndex;
 
@@ -29,10 +29,10 @@ int printIdentifier(char next, va_list arg)
 }
 
 
-int _printf(const char *format, ...);
+int _printf(const char *format, ...)
 {
 	unsigned int i;
-	int identifierPrinted = 0, charprinted = 0;
+	int identifierPrinted = 0, charPrinted = 0;
 	va_list arg;
 
 	va_start(arg, format);
@@ -44,20 +44,20 @@ int _printf(const char *format, ...);
 		if (format[i] != '%')
 		{
 			_putchar(format[i]);
-			charPrinted++
+			charPrinted++;
 			continue;
 		}
 		if (format[i + 1] == '%')
 		{
 			_putchar('%');
-			charPrinted++
-		        i++;
+			charPrinted++;
+			i++;
 			continue;
 		}
 		if (format[i + 1] == '\0')
 			return (-1);
 
-		identifierPrinted = printIdentifier(format[i + 1], arg);
+		identifierPrinted = printIdentifiers(format[i + 1], arg);
 		if (identifierPrinted == -1 || identifierPrinted != 0)
 			i++;
 		if (identifierPrinted > 0)
@@ -66,7 +66,7 @@ int _printf(const char *format, ...);
 		if (identifierPrinted == 0)
 		{
 			_putchar('%');
-			charPrinted++
+			charPrinted++;
 		}
 	}
 	va_end(arg);
