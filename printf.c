@@ -1,50 +1,12 @@
-#include <stdarg.h>
-#include <stddef.h>
 #include "main.h"
+#include <stdlib.h>
+#include <stdio.h>
 
 /**
- * get_operater - select function for conversion
- * @c: char to check
- * Return: pointer
- */
-
-int (*get_op(const char c))(va_list)
-{
-	int i = 0;
-
-	flags_p fp[] = {
-		{"c", print_char},
-		{"s", print_str},
-		{"i", print_nbr},
-		{"d", print_nbr},
-		{"b", print_binary},
-		{"o", print_octal},
-		{"x", print_hexa_lower},
-		{"X", print_hexa_upper},
-		{"u", print_unsigned},
-		{"S", print_str_unprintable},
-		{"r", print_str_reverse},
-		{"p", print_ptr},
-		{"R", print_rot13},
-		{"%", print_percent}
-	};
-	while (i < 14)
-	{
-		if (c == fp[i].c[0])
-		{
-			return (fp[i].f);
-		}
-		i++;
-	}
-	return (NULL);
-}
-
-/**
- * _printf - printf function
+ * _printf - Reproduce behavior of printf function
  * @format: format string
- * Return: chars
+ * Return: value of printed chars
  */
-
 int _printf(const char *format, ...)
 {
 	va_list ap;
@@ -67,7 +29,7 @@ int _printf(const char *format, ...)
 				sum++;
 				i++;
 			}
-			else
+			`else
 			{
 				sum += func(ap);
 				i += 2;
